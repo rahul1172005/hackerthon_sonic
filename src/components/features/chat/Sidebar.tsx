@@ -1,0 +1,80 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Plus, Database, Cpu, FileText, Zap, Info, HelpCircle } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
+
+export function Sidebar({ className }: { className?: string }) {
+    return (
+        <div className={cn("w-[260px] h-full bg-sidebar border-r border-sidebar-border flex flex-col", className)}>
+            <div className="p-4">
+                <Button variant="outline" className="w-full justify-start gap-2 border-sidebar-border bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-all h-10 shadow-sm">
+                    <Plus className="w-4 h-4" />
+                    New Test Session
+                </Button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto py-2 scrollabar-thin scrollbar-thumb-zinc-800">
+                <div className="px-3 mb-6">
+                    <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Recent Sessions</p>
+                    <div className="space-y-1">
+                        {['Bridge Pillar A4', 'Tunnel Section 3N-B', 'Highway Overpass 9', 'Foundation Grid 12'].map((item) => (
+                            <Button key={item} variant="ghost" className="w-full justify-start text-sm text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent font-normal truncate h-8 px-2 transition-colors">
+                                {item}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="px-3">
+                    <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">System</p>
+                    <div className="space-y-1">
+                        <SidebarItem icon={Database} label="Data Management" />
+                        <SidebarItem icon={Cpu} label="Device Config" />
+                        <SidebarItem icon={FileText} label="Generated Reports" />
+                    </div>
+                </div>
+
+                <div className="px-3 mt-6">
+                    <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Resources</p>
+                    <div className="space-y-1">
+                        <Link href="/features">
+                            <SidebarItem icon={Zap} label="Features" />
+                        </Link>
+                        <Link href="/about">
+                            <SidebarItem icon={Info} label="About" />
+                        </Link>
+                        <Link href="/help">
+                            <SidebarItem icon={HelpCircle} label="Help & Guide" />
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-4 border-t border-sidebar-border bg-sidebar">
+                <div className="flex items-center gap-3 group cursor-pointer">
+                    <div className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold text-xs border border-zinc-700 ring-2 ring-transparent group-hover:ring-zinc-600 transition-all">
+                        ENG
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                        <p className="text-sm font-medium text-sidebar-foreground truncate group-hover:text-white transition-colors">Raja Admin</p>
+
+                        <p className="text-xs text-muted-foreground truncate">Principal Architect</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function SidebarItem({ icon: Icon, label }: { icon: React.ElementType, label: string }) {
+    return (
+        <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent h-9 px-2">
+            <Icon className="w-4 h-4 opacity-70" />
+            {label}
+        </Button>
+    )
+}

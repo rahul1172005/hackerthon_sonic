@@ -1,0 +1,273 @@
+// This is a temporary file to build the NDT input panel component
+// Will be integrated into TestingDashboard.tsx
+
+{mode === 'manual' ? (
+    /* MANUAL NDT DATA ENTRY MODE */
+    <div className="space-y-6">
+        {/* NDT Data Input Panel */}
+        <Card className="bg-gradient-to-br from-zinc-900 via-zinc-900 to-zinc-900/80 border-zinc-800 shadow-2xl">
+            <CardHeader className="border-b border-zinc-800/50 bg-zinc-950/50 backdrop-blur-sm">
+                <div>
+                    <CardTitle className="text-white text-xl font-bold flex items-center gap-2">
+                        <FileText className="w-6 h-6 text-blue-500" />
+                        NDT Testing Parameters
+                    </CardTitle>
+                    <p className="text-zinc-500 text-sm mt-1">Enter ultrasonic testing measurements for structural analysis</p>
+                </div>
+            </CardHeader>
+            <CardContent className="p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Location & Metadata */}
+                    <div className="lg:col-span-3">
+                        <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                            <Database className="w-4 h-4 text-blue-500" />
+                            Test Location & Metadata
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Location *</label>
+                                <Input
+                                    placeholder="e.g., Column A-1, Beam B-2"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.location || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, location: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Structure Type</label>
+                                <select
+                                    className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2"
+                                    value={manualEntry.structureType || 'Concrete'}
+                                    onChange={e => setManualEntry({ ...manualEntry, structureType: e.target.value })}
+                                >
+                                    <option value="Concrete">Concrete</option>
+                                    <option value="Steel">Steel</option>
+                                    <option value="Composite">Composite</option>
+                                    <option value="Masonry">Masonry</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Temperature (°C)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="20.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.temperature || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, temperature: parseFloat(e.target.value) })}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Time of Flight */}
+                    <div className="lg:col-span-3">
+                        <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-emerald-500" />
+                            Time of Flight (ToF) Measurements
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">ToF (µs)</label>
+                                <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.tof || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, tof: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Time for ultrasonic wave to travel through material</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Velocity (m/s)</label>
+                                <Input
+                                    type="number"
+                                    step="10"
+                                    placeholder="4000"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.velocity || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, velocity: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Wave propagation velocity in material</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Attenuation & Signal Quality */}
+                    <div className="lg:col-span-3">
+                        <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                            <BarChart3 className="w-4 h-4 text-amber-500" />
+                            Attenuation & Signal Quality
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Attenuation (dB/m)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.attenuation || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, attenuation: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Signal loss per unit distance</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Amplitude (%)</label>
+                                <Input
+                                    type="number"
+                                    step="1"
+                                    placeholder="100"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.amplitude || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, amplitude: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Signal amplitude percentage</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Signal-to-Noise Ratio (dB)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="40.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.signalToNoise || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, signalToNoise: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Signal quality indicator</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Frequency Analysis */}
+                    <div className="lg:col-span-3">
+                        <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                            <Activity className="w-4 h-4 text-purple-500" />
+                            Frequency Analysis
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Frequency (MHz)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="5.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.frequency || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, frequency: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Ultrasonic wave frequency</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Frequency Distortion (%)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.frequencyDistortion || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, frequencyDistortion: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Frequency shift from nominal</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Impedance (MRayl)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="10.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.impedance || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, impedance: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Acoustic impedance of material</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Defect Detection */}
+                    <div className="lg:col-span-3">
+                        <h3 className="text-white font-semibold mb-4 flex items-center gap-2">
+                            <AlertTriangle className="w-4 h-4 text-red-500" />
+                            Defect Detection
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Depth (mm)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.depth || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, depth: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Depth of detected anomaly</p>
+                            </div>
+                            <div>
+                                <label className="text-zinc-400 text-sm font-medium mb-2 block">Defect Size (mm)</label>
+                                <Input
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="0.0"
+                                    className="bg-zinc-950 border-zinc-800 text-white"
+                                    value={manualEntry.defectSize || ''}
+                                    onChange={e => setManualEntry({ ...manualEntry, defectSize: parseFloat(e.target.value) })}
+                                />
+                                <p className="text-zinc-600 text-xs mt-1">Estimated size of defect</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div className="lg:col-span-3">
+                        <label className="text-zinc-400 text-sm font-medium mb-2 block">Additional Notes</label>
+                        <textarea
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white rounded-md px-3 py-2 min-h-[80px]"
+                            placeholder="Enter any additional observations or notes..."
+                            value={manualEntry.notes || ''}
+                            onChange={e => setManualEntry({ ...manualEntry, notes: e.target.value })}
+                        />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="lg:col-span-3 flex justify-end gap-4 pt-4 border-t border-zinc-800">
+                        <Button
+                            variant="outline"
+                            onClick={() => setManualEntry({
+                                location: '',
+                                tof: 0,
+                                attenuation: 0,
+                                frequency: 5.0,
+                                frequencyDistortion: 0,
+                                amplitude: 100,
+                                signalToNoise: 40,
+                                velocity: 4000,
+                                impedance: 10,
+                                depth: 0,
+                                defectSize: 0,
+                                structureType: 'Concrete',
+                                temperature: 20,
+                                notes: ''
+                            })}
+                            className="border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                        >
+                            <RotateCcw className="w-4 h-4 mr-2" />
+                            Clear Form
+                        </Button>
+                        <Button
+                            onClick={handleManualAdd}
+                            disabled={!manualEntry.location}
+                            size="lg"
+                            className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-200 px-8"
+                        >
+                            <CheckCircle className="w-5 h-5 mr-2" />
+                            Add Test Data
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    </div>
+) : (
