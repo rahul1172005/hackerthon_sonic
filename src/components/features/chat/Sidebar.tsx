@@ -3,15 +3,32 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Database, Cpu, FileText, Zap, Info, HelpCircle } from 'lucide-react';
+import { Plus, Database, Cpu, FileText, Zap, Info, HelpCircle, Trash2, MessageSquare } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { useChatStore } from '@/store/useChatStore';
 
 export function Sidebar({ className }: { className?: string }) {
+    // Destructure state from the store
+    const {
+        clearMessages,
+        sessions,
+        loadSession,
+        deleteSession,
+        currentSessionId
+    } = useChatStore();
+
+    // Default to empty array if sessions is somehow undefined during hydration
+    const safeSessions = sessions || [];
+
     return (
         <div className={cn("w-[260px] h-full bg-sidebar border-r border-sidebar-border flex flex-col", className)}>
             <div className="p-4">
-                <Button variant="outline" className="w-full justify-start gap-2 border-sidebar-border bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-all h-10 shadow-sm">
+                <Button
+                    variant="outline"
+                    className="w-full justify-start gap-2 border-sidebar-border bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-all h-10 shadow-sm"
+                    onClick={() => clearMessages()}
+                >
                     <Plus className="w-4 h-4" />
                     New Test Session
                 </Button>
@@ -21,11 +38,36 @@ export function Sidebar({ className }: { className?: string }) {
                 <div className="px-3 mb-6">
                     <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Recent Sessions</p>
                     <div className="space-y-1">
-                        {['Bridge Pillar A4', 'Tunnel Section 3N-B', 'Highway Overpass 9', 'Foundation Grid 12'].map((item) => (
-                            <Button key={item} variant="ghost" className="w-full justify-start text-sm text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent font-normal truncate h-8 px-2 transition-colors">
-                                {item}
-                            </Button>
-                        ))}
+                        {safeSessions.length === 0 ? (
+                            <p className="px-2 text-xs text-zinc-600 italic">No recent chats</p>
+                        ) : (
+                            safeSessions.map((session) => (
+                                <div
+                                    key={session.id}
+                                    className={cn(
+                                        "group flex items-center gap-2 w-full rounded-md px-2 py-1.5 transition-colors cursor-pointer",
+                                        currentSessionId === session.id
+                                            ? "bg-sidebar-accent text-sidebar-foreground"
+                                            : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                                    )}
+                                    onClick={() => loadSession(session.id)}
+                                >
+                                    <MessageSquare className="w-4 h-4 shrink-0" />
+                                    <span className="flex-1 text-sm truncate text-left">{session.title || 'Untitled Session'}</span>
+
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteSession(session.id);
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-zinc-700 rounded transition-all text-zinc-400 hover:text-red-400"
+                                        title="Delete chat"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
 
@@ -73,7 +115,6 @@ export function Sidebar({ className }: { className?: string }) {
 function SidebarItem({ icon: Icon, label }: { icon: React.ElementType, label: string }) {
     return (
         <Button variant="ghost" className="w-full justify-start gap-3 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent h-9 px-2">
-            <Icon className="w-4 h-4 opacity-70" />
             {label}
         </Button>
     )

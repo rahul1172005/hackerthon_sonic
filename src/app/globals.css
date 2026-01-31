@@ -154,4 +154,5 @@
   .text-gradient-grey {
     @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-400;
   }
+
 }

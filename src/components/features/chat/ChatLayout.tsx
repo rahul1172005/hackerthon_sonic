@@ -16,7 +16,7 @@ export function ChatLayout() {
             {/* Desktop Sidebar */}
             <Sidebar className="hidden md:flex" />
 
-            <main className="flex-1 flex flex-col relative bg-background">
+            <main className="flex-1 flex flex-col min-h-0 relative bg-background">
                 {/* Navbar (Desktop & Tablet) */}
                 <div className="w-full relative z-30 hidden md:block">
                     <Navbar className="relative border-b border-zinc-900/50 bg-black/80 md:bg-transparent" />
@@ -38,7 +38,7 @@ export function ChatLayout() {
                     <Link href="/" className="text-lg font-semibold tracking-widest text-white font-sans mr-2">IRIS</Link>
                 </div>
 
-                <div className="flex-1 relative">
+                <div className="flex-1 relative min-h-0">
                     <ChatInterface />
                 </div>
             </main>

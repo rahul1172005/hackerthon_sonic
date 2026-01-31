@@ -16,10 +16,7 @@ export default function FeaturesPage() {
 
                     {/* Hero Section */}
                     <div className="text-center space-y-6 max-w-3xl mx-auto">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 text-sm font-medium mb-4">
-                            <Zap className="w-4 h-4" />
-                            <span>v2.0 Release Features</span>
-                        </div>
+
                         <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
                             Advanced NDT Intelligence
                         </h1>
@@ -110,7 +107,7 @@ export default function FeaturesPage() {
                                 </ul>
                             </div>
                             <div className="relative">
-                                <div className="aspect-square rounded-2xl bg-zinc-950 border border-zinc-800 p-6 shadow-2xl skew-y-3 hover:skew-y-0 transition-transform duration-500 ease-out">
+                                <div className="aspect-square rounded-2xl bg-zinc-950 border border-zinc-800 p-6 shadow-2xl">
                                     <div className="space-y-4 font-mono text-sm text-zinc-400">
                                         <div className="flex gap-2 text-zinc-400">
                                             <span>$</span>
@@ -145,15 +142,14 @@ export default function FeaturesPage() {
 function FeatureCard({ icon: Icon, title, description, color, bg, border }: any) {
     return (
         <div className={cn(
-            "group relative p-8 rounded-2xl bg-zinc-950 border transition-all duration-300 hover:translate-y-[-5px]",
-            "hover:shadow-2xl hover:bg-zinc-900/80",
+            "p-8 rounded-2xl bg-zinc-950 border transition-all duration-300",
             border,
-            "border-zinc-800" // Default border overridden by prop if specific color needed, but usually just zinc-800 is cleaner with a colored glow
+            "border-zinc-800"
         )}>
-            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-transform group-hover:scale-110", bg)}>
+            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-6", bg)}>
                 <Icon className={cn("w-6 h-6", color)} />
             </div>
-            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-100 transition-colors">{title}</h3>
+            <h3 className="text-xl font-bold text-white mb-3 transition-colors">{title}</h3>
             <p className="text-zinc-400 leading-relaxed text-sm">
                 {description}
             </p>
