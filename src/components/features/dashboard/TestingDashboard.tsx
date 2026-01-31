@@ -10,9 +10,10 @@ import {
     Share2, Cpu, FileText, Settings, ShieldCheck,
     Video as VideoIcon, Box, Upload, Database, Download,
     AlertCircle, CheckCircle, BarChart3, Play, Square, RotateCcw, AlertTriangle,
-    Zap, FileSpreadsheet, RefreshCw, StopCircle
+    Zap, FileSpreadsheet, RefreshCw, StopCircle, Loader2, Brain
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { irisApi, AnalysisResult as MLAnalysisResult, getRiskLevelColor, getSeverityColor } from '@/lib/irisApi';
 import {
     Table,
     TableBody,
@@ -28,6 +29,7 @@ import { motion } from 'framer-motion';
 import { ConcreteStructure } from '../testing/ConcreteStructure';
 import { DataVisualization, SensorDataPoint } from '../testing/DataVisualization';
 import { CrackAnalysis } from '../testing/CrackAnalysis';
+import { MLAnalysisPanel } from '../testing/MLAnalysisPanel';
 
 // NDT Testing Data Interface
 interface NDTDataRow {
@@ -88,7 +90,7 @@ interface DetectionProcess {
 }
 
 export function TestingDashboard() {
-    const [mode, setMode] = useState<'csv' | 'manual' | 'live'>('manual');
+    const [mode, setMode] = useState<'csv' | 'manual' | 'live' | 'ml'>('manual');
 
     // --- DATA STATE ---
     const [data, setData] = useState<NDTDataRow[]>([]);
@@ -126,6 +128,17 @@ export function TestingDashboard() {
         detectedCracks: [],
     });
     const [sensorData, setSensorData] = useState<SensorDataPoint[]>([]);
+
+    // --- ML ANALYSIS STATE ---
+    const [mlLoading, setMlLoading] = useState(false);
+    const [mlError, setMlError] = useState<string | null>(null);
+    const [mlResult, setMlResult] = useState<MLAnalysisResult | null>(null);
+    const [uploadedMLFiles, setUploadedMLFiles] = useState<{
+        long_rot00?: File;
+        long_rot90?: File;
+        shear_rot00?: File;
+        shear_rot90?: File;
+    }>({});
 
     // --- SIMULATION LOGIC ---
     const startProcess = () => {
@@ -524,6 +537,42 @@ export function TestingDashboard() {
         document.body.removeChild(link);
     };
 
+    // --- ML ANALYSIS HANDLERS ---
+    const handleMLFileChange = (fileType: keyof typeof uploadedMLFiles, file: File | null) => {
+        if (file) {
+            setUploadedMLFiles(prev => ({ ...prev, [fileType]: file }));
+        }
+    };
+
+    const handleMLAnalyze = async () => {
+        if (!uploadedMLFiles.long_rot00 || !uploadedMLFiles.long_rot90 ||
+            !uploadedMLFiles.shear_rot00 || !uploadedMLFiles.shear_rot90) {
+            setMlError('Please upload all 4 wave files (.npy format)');
+            return;
+        }
+
+        setMlLoading(true);
+        setMlError(null);
+
+        try {
+            const result = await irisApi.analyzeStructure({
+                long_rot00: uploadedMLFiles.long_rot00,
+                long_rot90: uploadedMLFiles.long_rot90,
+                shear_rot00: uploadedMLFiles.shear_rot00,
+                shear_rot90: uploadedMLFiles.shear_rot90,
+            });
+
+            setMlResult(result);
+        } catch (err: any) {
+            setMlError(err.message || 'Analysis failed. Ensure backend is running at http://localhost:8000');
+        } finally {
+            setMlLoading(false);
+        }
+    };
+
+    const allMLFilesUploaded = uploadedMLFiles.long_rot00 && uploadedMLFiles.long_rot90 &&
+                                uploadedMLFiles.shear_rot00 && uploadedMLFiles.shear_rot90;
+
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-black via-zinc-950 to-black relative">
             {/* Background Pattern */}
@@ -540,7 +589,11 @@ export function TestingDashboard() {
                         <p className="text-zinc-400 text-base max-w-2xl">
                             {mode === 'manual'
                                 ? "Enter ultrasonic testing parameters including ToF, attenuation, frequency distortion, and signal quality metrics for comprehensive structural analysis."
-                                : "Import CSV files containing NDT test data for batch analysis and structural health assessment."}
+                                : mode === 'csv'
+                                ? "Import CSV files containing NDT test data for batch analysis and structural health assessment."
+                                : mode === 'live'
+                                ? "Connect to Arduino sensors for real-time ultrasonic wave data collection and live structural monitoring."
+                                : "Upload ultrasonic wave .npy files for AI-powered crack detection with 96% accuracy using Random Forest machine learning."}
                         </p>
                     </div>
 
@@ -578,6 +631,18 @@ export function TestingDashboard() {
                             )}
                         >
                             Live Testing
+                        </button>
+                        <button
+                            onClick={() => setMode('ml')}
+                            className={cn(
+                                "px-6 py-3 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-2.5",
+                                mode === 'ml'
+                                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50"
+                                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50"
+                            )}
+                        >
+                            <Brain className="w-4 h-4" />
+                            AI Analysis
                         </button>
                     </div>
                 </div>
@@ -1287,6 +1352,15 @@ export function TestingDashboard() {
                             </Card>
                         )}
                     </div>
+                ) : mode === 'ml' ? (
+                    <MLAnalysisPanel
+                        uploadedFiles={uploadedMLFiles}
+                        onFileChange={handleMLFileChange}
+                        onAnalyze={handleMLAnalyze}
+                        loading={mlLoading}
+                        error={mlError}
+                        result={mlResult}
+                    />
                 ) : null}
             </div>
         </div >
