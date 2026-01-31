@@ -126,15 +126,18 @@ export function ChatInterface() {
                             {/* NAVIGATION LINKS (Gemini Style Pills) */}
                             <div className="flex flex-wrap items-center justify-center gap-8">
                                 {navLinks.map((link) => (
-                                    <Link
+                                    <Button
                                         key={link.name}
-                                        href={link.href}
-                                        className="flex items-center gap-3 px-6 py-3 rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:border-zinc-700 transition-all group"
+                                        asChild
+                                        variant="physical"
+                                        className="rounded-full px-8 h-12 mb-0 after:hidden hover:scale-105 active:scale-95 text-white bg-black border-white/20"
                                     >
-                                        <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors tracking-wide">
-                                            {link.name}
-                                        </span>
-                                    </Link>
+                                        <Link href={link.href}>
+                                            <span className="relative z-10 tracking-widest font-bold text-xs">
+                                                {link.name}
+                                            </span>
+                                        </Link>
+                                    </Button>
                                 ))}
                             </div>
                         </div>

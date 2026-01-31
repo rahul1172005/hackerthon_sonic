@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowRight, Zap, Radio, Laptop } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -29,15 +31,22 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black text-white selection:bg-cyan-900/50 flex flex-col items-center justify-center relative overflow-hidden font-sans">
 
       {/* Ambient Background */}
-
-
-      <main className="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-12">
+      <div className="fixed inset-0 z-0">
+        <Image
+          src="/image111.png"
+          alt="Background"
+          fill
+          priority
+          className="object-cover opacity-20 grayscale"
+          unoptimized
+        />
+      </div>      <main className="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-12">
 
         {/* Logo / Brand */}
 
 
         {/* Main Headline */}
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100 ease-out fill-mode-backwards">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100 ease-out fill-mode-backwards drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
           <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
             <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-500">
               SONIC
@@ -69,13 +78,17 @@ export default function LandingPage() {
               </div>
             </div>
           ) : (
-            <button
+            <Button
+              variant="physical"
+              size="lg"
               onClick={handleTryNow}
-              className="group relative inline-flex items-center justify-center gap-3 px-12 py-5 bg-white text-black text-lg font-bold tracking-wide rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl"
+              className="px-12 py-8 text-lg font-bold tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all duration-300"
             >
-              <span className="relative">TRY NOW</span>
-              <ArrowRight className="w-5 h-5 relative group-hover:translate-x-1 transition-transform" />
-            </button>
+              <span className="relative z-10 flex items-center gap-3">
+                TRY NOW
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Button>
           )}
         </div>
 
