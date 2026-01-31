@@ -1,55 +1,52 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Grid, Line } from '@react-three/drei';
-import { useRef, useEffect, useMemo } from 'react';
+import { OrbitControls, Line, Text } from '@react-three/drei';
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
-import gsap from 'gsap';
 
 interface CrackData {
   position: [number, number, number];
-  growth: number; // 0 to 1
+  growth: number;
   severity: 'minor' | 'moderate' | 'severe' | 'critical';
 }
 
 interface WireframeBuildingProps {
   crackData: CrackData[];
-  timelineProgress: number; // 0 to 1
+  timelineProgress: number;
 }
 
 const WireframeBuilding = ({ crackData, timelineProgress }: WireframeBuildingProps) => {
   const buildingRef = useRef<THREE.Group>(null);
-  const crackRefs = useRef<THREE.Mesh[]>([]);
 
-  // Building structure - 10 floors, realistic proportions
-  const floors = 10;
-  const floorHeight = 0.4;
-  const buildingWidth = 4;
-  const buildingDepth = 3;
+  // Building structure - 6 floors (G+5), realistic proportions
+  const floors = 6;
+  const floorHeight = 0.5;
+  const buildingWidth = 3;
+  const buildingDepth = 2.5;
   const totalHeight = floors * floorHeight;
+  const columnsX = 4; // Number of columns along X
+  const columnsZ = 3; // Number of columns along Z
 
-  // Crack animation
-  useEffect(() => {
-    if (crackRefs.current.length > 0) {
-      crackRefs.current.forEach((crack, index) => {
-        if (crack && crackData[index]) {
-          const targetScale = crackData[index].growth * timelineProgress;
-          gsap.to(crack.scale, {
-            y: targetScale * 5,
-            duration: 0.5,
-            ease: 'power2.out',
-          });
-        }
-      });
+  // Calculate column positions
+  const columnPositions = useMemo(() => {
+    const positions: [number, number][] = [];
+    for (let x = 0; x < columnsX; x++) {
+      for (let z = 0; z < columnsZ; z++) {
+        const xPos = -buildingWidth / 2 + (x * buildingWidth) / (columnsX - 1);
+        const zPos = -buildingDepth / 2 + (z * buildingDepth) / (columnsZ - 1);
+        positions.push([xPos, zPos]);
+      }
     }
-  }, [crackData, timelineProgress]);
+    return positions;
+  }, [buildingWidth, buildingDepth]);
 
-  // Floor wireframes
+  // Floor slab outlines
   const floorLines = useMemo(() => {
     const lines = [];
     for (let i = 0; i <= floors; i++) {
       const y = i * floorHeight - totalHeight / 2;
-      // Horizontal floor outline
+      // Outer perimeter
       lines.push({
         points: [
           [-buildingWidth / 2, y, -buildingDepth / 2],
@@ -57,31 +54,57 @@ const WireframeBuilding = ({ crackData, timelineProgress }: WireframeBuildingPro
           [buildingWidth / 2, y, buildingDepth / 2],
           [-buildingWidth / 2, y, buildingDepth / 2],
           [-buildingWidth / 2, y, -buildingDepth / 2],
-        ],
-        color: '#ffffff',
-        lineWidth: i === 0 || i === floors ? 2 : 1,
+        ] as [number, number, number][],
+        isMain: i === 0 || i === floors,
       });
+
+      // Internal grid lines - X direction
+      for (let x = 1; x < columnsX - 1; x++) {
+        const xPos = -buildingWidth / 2 + (x * buildingWidth) / (columnsX - 1);
+        lines.push({
+          points: [
+            [xPos, y, -buildingDepth / 2],
+            [xPos, y, buildingDepth / 2],
+          ] as [number, number, number][],
+          isMain: false,
+        });
+      }
+
+      // Internal grid lines - Z direction
+      for (let z = 1; z < columnsZ - 1; z++) {
+        const zPos = -buildingDepth / 2 + (z * buildingDepth) / (columnsZ - 1);
+        lines.push({
+          points: [
+            [-buildingWidth / 2, y, zPos],
+            [buildingWidth / 2, y, zPos],
+          ] as [number, number, number][],
+          isMain: false,
+        });
+      }
     }
     return lines;
-  }, [floors, floorHeight, buildingWidth, buildingDepth, totalHeight]);
+  }, [floors, floorHeight, buildingWidth, buildingDepth, totalHeight, columnsX, columnsZ]);
 
   // Vertical column lines
   const columnLines = useMemo(() => {
-    const corners = [
-      [-buildingWidth / 2, -buildingDepth / 2],
-      [buildingWidth / 2, -buildingDepth / 2],
-      [buildingWidth / 2, buildingDepth / 2],
-      [-buildingWidth / 2, buildingDepth / 2],
-    ];
-    return corners.map(([x, z]) => ({
+    return columnPositions.map(([x, z]) => ({
       points: [
         [x, -totalHeight / 2, z],
         [x, totalHeight / 2, z],
-      ],
-      color: '#ffffff',
-      lineWidth: 2,
+      ] as [number, number, number][],
+      isCorner: Math.abs(x) === buildingWidth / 2 && Math.abs(z) === buildingDepth / 2,
     }));
-  }, [buildingWidth, buildingDepth, totalHeight]);
+  }, [columnPositions, totalHeight, buildingWidth, buildingDepth]);
+
+  // Calculate crack line based on severity and growth
+  const getCrackColor = (severity: string) => {
+    switch (severity) {
+      case 'critical': return '#dc2626';
+      case 'severe': return '#ea580c';
+      case 'moderate': return '#d97706';
+      default: return '#eab308';
+    }
+  };
 
   return (
     <group ref={buildingRef}>
@@ -90,10 +113,10 @@ const WireframeBuilding = ({ crackData, timelineProgress }: WireframeBuildingPro
         <Line
           key={`floor-${index}`}
           points={line.points}
-          color={line.color}
-          lineWidth={line.lineWidth}
+          color={line.isMain ? '#e5e5e5' : '#737373'}
+          lineWidth={line.isMain ? 2 : 1}
           transparent
-          opacity={0.8}
+          opacity={line.isMain ? 0.9 : 0.5}
         />
       ))}
 
@@ -102,86 +125,105 @@ const WireframeBuilding = ({ crackData, timelineProgress }: WireframeBuildingPro
         <Line
           key={`column-${index}`}
           points={line.points}
-          color={line.color}
-          lineWidth={line.lineWidth}
+          color={line.isCorner ? '#e5e5e5' : '#a3a3a3'}
+          lineWidth={line.isCorner ? 2.5 : 1.5}
           transparent
-          opacity={0.8}
+          opacity={line.isCorner ? 0.9 : 0.7}
         />
       ))}
 
-      {/* Crack visualization */}
-      {crackData.map((crack, index) => (
-        <group key={`crack-${index}`} position={crack.position}>
-          {/* Main crack line */}
-          <mesh
-            ref={(el) => {
-              if (el) crackRefs.current[index] = el;
-            }}
-            scale={[1, 0.01, 1]}
-          >
-            <boxGeometry args={[0.02, 1, 0.02]} />
-            <meshBasicMaterial
-              color="#ff0051"
-              emissive="#ff0051"
-              emissiveIntensity={2}
-              transparent
-              opacity={timelineProgress}
-            />
-          </mesh>
-
-          {/* Crack glow effect */}
-          <pointLight
-            color="#ff0051"
-            intensity={crack.severity === 'critical' ? 2 : 1}
-            distance={1}
-            decay={2}
+      {/* Critical column highlight - C3 ground floor */}
+      {timelineProgress > 0.3 && (
+        <group position={[buildingWidth / 4, -totalHeight / 2 + floorHeight / 2, 0]}>
+          <Line
+            points={[
+              [0, -floorHeight / 2, 0],
+              [0, floorHeight / 2, 0],
+            ]}
+            color="#dc2626"
+            lineWidth={4}
+            transparent
+            opacity={0.8 + Math.sin(Date.now() * 0.003) * 0.2}
           />
-
-          {/* Pulse indicator at crack origin */}
-          {crack.severity === 'critical' && (
-            <mesh position={[0, -0.5, 0]}>
-              <sphereGeometry args={[0.05, 16, 16]} />
-              <meshBasicMaterial
-                color="#ff0051"
-                transparent
-                opacity={0.6 * timelineProgress}
-              />
-            </mesh>
-          )}
         </group>
+      )}
+
+      {/* Crack visualization */}
+      {crackData.map((crack, index) => {
+        const crackLength = crack.growth * timelineProgress * 0.8;
+        if (crackLength < 0.01) return null;
+
+        return (
+          <group key={`crack-${index}`} position={crack.position}>
+            {/* Main crack line - diagonal pattern */}
+            <Line
+              points={[
+                [0, 0, 0],
+                [crackLength * 0.3, -crackLength, crackLength * 0.2],
+                [crackLength * 0.5, -crackLength * 1.5, crackLength * 0.1],
+              ]}
+              color={getCrackColor(crack.severity)}
+              lineWidth={3}
+              transparent
+              opacity={0.9}
+            />
+
+            {/* Secondary fracture lines */}
+            {crack.severity === 'critical' && crackLength > 0.3 && (
+              <>
+                <Line
+                  points={[
+                    [crackLength * 0.3, -crackLength, crackLength * 0.2],
+                    [crackLength * 0.6, -crackLength * 0.8, crackLength * 0.4],
+                  ]}
+                  color={getCrackColor(crack.severity)}
+                  lineWidth={2}
+                  transparent
+                  opacity={0.7}
+                />
+                <Line
+                  points={[
+                    [crackLength * 0.3, -crackLength, crackLength * 0.2],
+                    [crackLength * 0.1, -crackLength * 1.2, -crackLength * 0.2],
+                  ]}
+                  color={getCrackColor(crack.severity)}
+                  lineWidth={2}
+                  transparent
+                  opacity={0.7}
+                />
+              </>
+            )}
+          </group>
+        );
+      })}
+
+      {/* Floor labels */}
+      {[0, 2, 5].map((floor) => (
+        <Text
+          key={`label-${floor}`}
+          position={[-buildingWidth / 2 - 0.3, floor * floorHeight - totalHeight / 2 + floorHeight / 2, 0]}
+          fontSize={0.15}
+          color="#737373"
+          anchorX="right"
+          anchorY="middle"
+        >
+          {floor === 0 ? 'G' : `${floor}`}
+        </Text>
       ))}
     </group>
   );
 };
 
-// Animated grid floor
-const AnimatedGrid = () => {
-  return (
-    <Grid
-      args={[20, 20]}
-      cellSize={0.5}
-      cellThickness={0.5}
-      cellColor="#1f1f1f"
-      sectionSize={5}
-      sectionThickness={1}
-      sectionColor="#2a2a2a"
-      fadeDistance={30}
-      fadeStrength={1}
-      followCamera={false}
-      infiniteGrid={false}
-    />
-  );
-};
+// Grid floor
+const GridFloor = () => {
+  const gridSize = 12;
+  const divisions = 24;
 
-// Auto-rotating camera
-const CameraRig = () => {
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    state.camera.position.x = Math.sin(t * 0.1) * 8;
-    state.camera.position.z = Math.cos(t * 0.1) * 8;
-    state.camera.lookAt(0, 0, 0);
-  });
-  return null;
+  return (
+    <group position={[0, -1.6, 0]}>
+      <gridHelper args={[gridSize, divisions, '#262626', '#1a1a1a']} />
+    </group>
+  );
 };
 
 interface BuildingVisualizationProps {
@@ -192,42 +234,42 @@ interface BuildingVisualizationProps {
 
 export const BuildingVisualization = ({
   crackData = [
-    { position: [2, -1, 0], growth: 1, severity: 'critical' },
-    { position: [-1.5, 0.5, 1], growth: 0.6, severity: 'moderate' },
+    { position: [0.75, -0.5, 0], growth: 1, severity: 'critical' },
+    { position: [-0.5, 0.25, 0.5], growth: 0.6, severity: 'moderate' },
   ],
   timelineProgress = 1,
-  autoRotate = true,
+  autoRotate = false,
 }: BuildingVisualizationProps) => {
   return (
     <div className="h-full w-full bg-[#0a0a0a]">
       <Canvas
-        camera={{ position: [8, 6, 8], fov: 45 }}
+        camera={{ position: [5, 4, 5], fov: 50 }}
         gl={{ antialias: true, alpha: false }}
         dpr={[1, 2]}
       >
         {/* Lighting */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[10, 10, 5]} intensity={0.6} color="#ffffff" />
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[10, 10, 5]} intensity={0.4} color="#ffffff" />
 
         {/* 3D Scene */}
         <WireframeBuilding crackData={crackData} timelineProgress={timelineProgress} />
-        <AnimatedGrid />
+        <GridFloor />
 
-        {/* Camera Controls */}
-        {autoRotate ? (
-          <CameraRig />
-        ) : (
-          <OrbitControls
-            enableZoom={true}
-            enablePan={false}
-            minDistance={5}
-            maxDistance={20}
-            minPolarAngle={Math.PI / 4}
-            maxPolarAngle={Math.PI / 2}
-          />
-        )}
+        {/* Camera Controls - stable orbit controls only */}
+        <OrbitControls
+          enableZoom={true}
+          enablePan={false}
+          autoRotate={autoRotate}
+          autoRotateSpeed={0.5}
+          minDistance={4}
+          maxDistance={15}
+          minPolarAngle={Math.PI / 6}
+          maxPolarAngle={Math.PI / 2.2}
+          dampingFactor={0.05}
+          enableDamping={true}
+        />
 
-        {/* Performance optimization */}
+        {/* Background */}
         <color attach="background" args={['#0a0a0a']} />
       </Canvas>
     </div>

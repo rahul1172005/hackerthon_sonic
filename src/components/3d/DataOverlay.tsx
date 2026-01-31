@@ -16,9 +16,8 @@ const MetricCard = ({ label, value, unit, status = 'safe', delay = 0 }: MetricCa
 
   useEffect(() => {
     if (typeof value === 'number') {
-      // Animated counter
-      const duration = 2000;
-      const steps = 60;
+      const duration = 1500;
+      const steps = 40;
       const increment = value / steps;
       let current = 0;
 
@@ -36,43 +35,50 @@ const MetricCard = ({ label, value, unit, status = 'safe', delay = 0 }: MetricCa
     }
   }, [value]);
 
-  const statusColors = {
-    safe: 'bg-[#10b981]/10 text-[#10b981] border-[#10b981]/30',
-    warning: 'bg-[#fbbf24]/10 text-[#fbbf24] border-[#fbbf24]/30',
-    critical: 'bg-[#ff0051]/10 text-[#ff0051] border-[#ff0051]/30',
+  const statusConfig = {
+    safe: {
+      bg: 'bg-emerald-950/40',
+      text: 'text-emerald-400',
+      border: 'border-emerald-800/50',
+      label: 'STABLE'
+    },
+    warning: {
+      bg: 'bg-amber-950/40',
+      text: 'text-amber-400',
+      border: 'border-amber-800/50',
+      label: 'WARNING'
+    },
+    critical: {
+      bg: 'bg-red-950/40',
+      text: 'text-red-400',
+      border: 'border-red-800/50',
+      label: 'CRITICAL'
+    },
   };
+
+  const config = statusConfig[status];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="
-        bg-[#141414]/60 backdrop-blur-xl
-        border border-[#ffffff]/10
-        rounded-lg p-6
-        hover:border-[#00d4ff]/30 transition-colors duration-300
-      "
+      transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-neutral-900/80 backdrop-blur-lg border border-neutral-800 rounded-lg p-5"
     >
-      <div className="flex items-baseline justify-between mb-4">
-        <span className="text-[#a3a3a3] text-xs uppercase tracking-[0.1em] font-medium">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-neutral-400 text-xs uppercase tracking-widest font-medium">
           {label}
         </span>
-        <span
-          className={`
-          text-xs px-2 py-1 rounded border font-mono
-          ${statusColors[status]}
-        `}
-        >
-          {status.toUpperCase()}
+        <span className={`text-xs px-2 py-0.5 rounded ${config.bg} ${config.text} ${config.border} border font-mono`}>
+          {config.label}
         </span>
       </div>
 
-      <div className="flex items-baseline gap-2">
-        <span className="text-5xl text-[#ffffff] font-mono font-bold tabular-nums">
+      <div className="flex items-baseline gap-1">
+        <span className="text-4xl text-white font-mono font-semibold tabular-nums tracking-tight">
           {displayValue}
         </span>
-        {unit && <span className="text-lg text-[#525252] font-mono">{unit}</span>}
+        {unit && <span className="text-lg text-neutral-500 font-mono">{unit}</span>}
       </div>
     </motion.div>
   );
@@ -80,31 +86,31 @@ const MetricCard = ({ label, value, unit, status = 'safe', delay = 0 }: MetricCa
 
 interface ProgressBarProps {
   label: string;
-  value: number; // 0 to 100
+  value: number;
   color?: string;
   delay?: number;
 }
 
-const ProgressBar = ({ label, value, color = '#00d4ff', delay = 0 }: ProgressBarProps) => {
+const ProgressBar = ({ label, value, color = '#0ea5e9', delay = 0 }: ProgressBarProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="bg-[#141414]/60 backdrop-blur-xl border border-[#ffffff]/10 rounded-lg p-6"
+      transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-neutral-900/80 backdrop-blur-lg border border-neutral-800 rounded-lg p-5"
     >
-      <div className="flex items-baseline justify-between mb-3">
-        <span className="text-[#a3a3a3] text-xs uppercase tracking-[0.1em] font-medium">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-neutral-400 text-xs uppercase tracking-widest font-medium">
           {label}
         </span>
-        <span className="text-[#ffffff] text-sm font-mono font-bold">{value}%</span>
+        <span className="text-white text-sm font-mono font-semibold">{value}%</span>
       </div>
 
-      <div className="h-2 bg-[#1f1f1f] rounded-full overflow-hidden">
+      <div className="h-1.5 bg-neutral-800 rounded-full overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${value}%` }}
-          transition={{ delay: delay + 0.3, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ delay: delay + 0.2, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="h-full rounded-full"
           style={{ backgroundColor: color }}
         />
@@ -119,38 +125,35 @@ interface TimeToFailureProps {
 }
 
 const TimeToFailure = ({ months, delay = 0 }: TimeToFailureProps) => {
+  const isUrgent = months <= 6;
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="
-        bg-[#ff0051]/5 backdrop-blur-xl
-        border border-[#ff0051]/30
-        rounded-lg p-6
-        relative overflow-hidden
-      "
+      transition={{ delay, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className={`
+        backdrop-blur-lg rounded-lg p-5 relative overflow-hidden
+        ${isUrgent
+          ? 'bg-red-950/50 border border-red-900/60'
+          : 'bg-neutral-900/80 border border-neutral-800'
+        }
+      `}
     >
-      <motion.div
-        animate={{ opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute inset-0 bg-[#ff0051]/10"
-      />
-
       <div className="relative z-10">
-        <span className="text-[#ff0051] text-xs uppercase tracking-[0.1em] font-medium block mb-4">
-          ⚠️ TIME TO FAILURE
+        <span className={`text-xs uppercase tracking-widest font-medium block mb-3 ${isUrgent ? 'text-red-400' : 'text-neutral-400'}`}>
+          Predicted Time to Failure
         </span>
 
-        <div className="flex items-baseline gap-3">
-          <span className="text-6xl text-[#ff0051] font-mono font-bold tabular-nums">
+        <div className="flex items-baseline gap-2">
+          <span className={`text-5xl font-mono font-bold tabular-nums ${isUrgent ? 'text-red-400' : 'text-white'}`}>
             {months}
           </span>
-          <span className="text-xl text-[#ff0051]/70 font-mono">MONTHS</span>
+          <span className={`text-lg font-mono ${isUrgent ? 'text-red-400/70' : 'text-neutral-500'}`}>months</span>
         </div>
 
-        <p className="text-[#a3a3a3] text-xs mt-4">
-          Predicted collapse window based on current crack progression
+        <p className="text-neutral-500 text-xs mt-3">
+          Based on crack progression analysis
         </p>
       </div>
     </motion.div>
@@ -171,9 +174,9 @@ export const DataOverlay = ({
   riskLevel = 'warning',
 }: DataOverlayProps) => {
   return (
-    <div className="absolute inset-0 pointer-events-none">
+    <div className="absolute inset-0 pointer-events-none p-6">
       {/* Top left - Main metrics */}
-      <div className="absolute top-8 left-8 w-80 space-y-4 pointer-events-auto">
+      <div className="absolute top-20 left-6 w-72 space-y-3 pointer-events-auto">
         <MetricCard
           label="Structural Integrity"
           value={structuralIntegrity}
@@ -183,68 +186,74 @@ export const DataOverlay = ({
         />
 
         <ProgressBar
-          label="Crack Severity Score"
+          label="Crack Severity"
           value={crackSeverity}
-          color={crackSeverity > 70 ? '#ff0051' : crackSeverity > 40 ? '#fbbf24' : '#10b981'}
+          color={crackSeverity > 70 ? '#dc2626' : crackSeverity > 40 ? '#d97706' : '#10b981'}
           delay={0.1}
         />
       </div>
 
       {/* Top right - Building info */}
-      <div className="absolute top-8 right-8 w-80 pointer-events-auto">
+      <div className="absolute top-20 right-6 w-72 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-[#141414]/60 backdrop-blur-xl border border-[#ffffff]/10 rounded-lg p-6"
+          transition={{ delay: 0.15, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="bg-neutral-900/80 backdrop-blur-lg border border-neutral-800 rounded-lg p-5"
         >
-          <h3 className="text-[#ffffff] text-lg font-semibold mb-4">Tariq Garden</h3>
-          <div className="space-y-2 text-sm">
+          <h3 className="text-white text-base font-semibold mb-4">Building Information</h3>
+          <div className="space-y-2.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-[#a3a3a3]">Location</span>
-              <span className="text-[#ffffff] font-mono">Mahad, Maharashtra</span>
+              <span className="text-neutral-500">Name</span>
+              <span className="text-white font-medium">Tariq Garden</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#a3a3a3]">Type</span>
-              <span className="text-[#ffffff] font-mono">G+5 RCC Frame</span>
+              <span className="text-neutral-500">Location</span>
+              <span className="text-neutral-300 font-mono text-xs">Mahad, Maharashtra</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#a3a3a3]">Age</span>
-              <span className="text-[#ffffff] font-mono">6 years</span>
+              <span className="text-neutral-500">Structure</span>
+              <span className="text-neutral-300 font-mono text-xs">G+5 RCC Frame</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[#a3a3a3]">Critical Column</span>
-              <span className="text-[#ff0051] font-mono font-bold">C3 (Ground Floor)</span>
+              <span className="text-neutral-500">Age</span>
+              <span className="text-neutral-300 font-mono text-xs">6 years</span>
+            </div>
+            <div className="h-px bg-neutral-800 my-2" />
+            <div className="flex justify-between">
+              <span className="text-neutral-500">Critical Point</span>
+              <span className="text-red-400 font-mono text-xs font-medium">Column C3 (GF)</span>
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Bottom center - Time to failure */}
-      <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-96 pointer-events-auto">
-        <TimeToFailure months={timeToFailure} delay={0.3} />
+      {/* Bottom right - Time to failure */}
+      <div className="absolute bottom-28 right-6 w-72 pointer-events-auto">
+        <TimeToFailure months={timeToFailure} delay={0.2} />
       </div>
 
       {/* Bottom left - Legend */}
-      <div className="absolute bottom-8 left-8 pointer-events-auto">
+      <div className="absolute bottom-28 left-6 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-          className="bg-[#141414]/60 backdrop-blur-xl border border-[#ffffff]/10 rounded-lg p-4"
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="bg-neutral-900/80 backdrop-blur-lg border border-neutral-800 rounded-lg p-4"
         >
+          <span className="text-neutral-500 text-xs uppercase tracking-widest font-medium block mb-3">Legend</span>
           <div className="space-y-2 text-xs">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-[#ffffff] opacity-80 rounded-sm" />
-              <span className="text-[#a3a3a3]">Building Structure</span>
+              <div className="w-4 h-0.5 bg-neutral-300 rounded-full" />
+              <span className="text-neutral-400">Structure Frame</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-[#ff0051] rounded-sm" />
-              <span className="text-[#a3a3a3]">Critical Crack</span>
+              <div className="w-4 h-0.5 bg-red-500 rounded-full" />
+              <span className="text-neutral-400">Critical Crack</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-[#fbbf24] rounded-sm" />
-              <span className="text-[#a3a3a3]">Moderate Crack</span>
+              <div className="w-4 h-0.5 bg-amber-500 rounded-full" />
+              <span className="text-neutral-400">Moderate Crack</span>
             </div>
           </div>
         </motion.div>

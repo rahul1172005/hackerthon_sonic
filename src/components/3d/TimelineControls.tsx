@@ -2,14 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { Play, Pause, RotateCcw, Download } from 'lucide-react';
-import { useState, useEffect } from 'react';
 
 interface TimelineControlsProps {
   onPlayPause: () => void;
   onReset: () => void;
   onExport: () => void;
   isPlaying: boolean;
-  progress: number; // 0 to 1
+  progress: number;
   speed: number;
   onSpeedChange: (speed: number) => void;
 }
@@ -23,30 +22,30 @@ export const TimelineControls = ({
   speed,
   onSpeedChange,
 }: TimelineControlsProps) => {
-  const [timelineEvents, setTimelineEvents] = useState([
-    { time: 0, label: '2012-2014', description: 'Construction (substandard concrete)' },
-    { time: 0.25, label: '2018-2019', description: 'First cracks reported' },
-    { time: 0.5, label: 'Feb 2019', description: 'IRIS AI Inspection (hypothetical)' },
-    { time: 0.75, label: 'Aug 2020', description: 'Critical crack detected' },
-    { time: 1, label: 'Aug 24, 2020', description: 'Building collapse' },
-  ]);
+  const timelineEvents = [
+    { time: 0, label: '2012', description: 'Construction Phase' },
+    { time: 0.25, label: '2018', description: 'First Cracks' },
+    { time: 0.5, label: 'Feb 2019', description: 'IRIS Inspection' },
+    { time: 0.75, label: 'Aug 2020', description: 'Critical State' },
+    { time: 1, label: 'Aug 24', description: 'Collapse' },
+  ];
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-5xl pointer-events-auto">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl pointer-events-auto">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-[#141414]/80 backdrop-blur-xl border border-[#ffffff]/10 rounded-2xl p-6"
+        transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-neutral-900/90 backdrop-blur-xl border border-neutral-800 rounded-xl p-5"
       >
         {/* Timeline scrubber */}
-        <div className="mb-6">
-          <div className="relative h-2 bg-[#1f1f1f] rounded-full overflow-hidden">
+        <div className="mb-8 pt-2">
+          <div className="relative h-1 bg-neutral-800 rounded-full overflow-hidden">
             {/* Progress bar */}
             <motion.div
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#00d4ff] to-[#ff0051]"
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-sky-500 to-sky-400"
               style={{ width: `${progress * 100}%` }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.15 }}
             />
 
             {/* Event markers */}
@@ -58,26 +57,23 @@ export const TimelineControls = ({
               >
                 {/* Marker dot */}
                 <div
-                  className={`w-3 h-3 rounded-full border-2 transition-colors ${
-                    progress >= event.time
-                      ? 'bg-[#00d4ff] border-[#00d4ff]'
-                      : 'bg-[#141414] border-[#525252]'
-                  }`}
+                  className={`w-2.5 h-2.5 rounded-full border-2 transition-all duration-200 ${progress >= event.time
+                      ? 'bg-sky-400 border-sky-400 scale-110'
+                      : 'bg-neutral-900 border-neutral-600'
+                    }`}
                 />
 
                 {/* Event label */}
-                <div className="absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
                   <div
-                    className={`text-xs font-mono transition-colors ${
-                      progress >= event.time ? 'text-[#ffffff]' : 'text-[#525252]'
-                    }`}
+                    className={`text-xs font-mono font-medium transition-colors ${progress >= event.time ? 'text-white' : 'text-neutral-600'
+                      }`}
                   >
                     {event.label}
                   </div>
                   <div
-                    className={`text-[10px] text-center mt-1 transition-colors ${
-                      progress >= event.time ? 'text-[#a3a3a3]' : 'text-[#525252]'
-                    }`}
+                    className={`text-[10px] text-center mt-0.5 transition-colors ${progress >= event.time ? 'text-neutral-400' : 'text-neutral-700'
+                      }`}
                   >
                     {event.description}
                   </div>
@@ -90,54 +86,53 @@ export const TimelineControls = ({
         {/* Controls */}
         <div className="flex items-center justify-between">
           {/* Left - Playback controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={onPlayPause}
               className="
-                w-12 h-12 rounded-full
-                bg-[#00d4ff] hover:bg-[#00b8e6]
+                w-10 h-10 rounded-lg
+                bg-sky-500 hover:bg-sky-400
                 flex items-center justify-center
-                transition-all duration-200
+                transition-all duration-150
                 hover:scale-105 active:scale-95
               "
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 text-[#0a0a0a]" fill="#0a0a0a" />
+                <Pause className="w-4 h-4 text-neutral-900" strokeWidth={2.5} />
               ) : (
-                <Play className="w-5 h-5 text-[#0a0a0a] ml-0.5" fill="#0a0a0a" />
+                <Play className="w-4 h-4 text-neutral-900 ml-0.5" strokeWidth={2.5} />
               )}
             </button>
 
             <button
               onClick={onReset}
               className="
-                w-12 h-12 rounded-full
-                bg-[#1f1f1f] hover:bg-[#2a2a2a]
-                border border-[#ffffff]/10
+                w-10 h-10 rounded-lg
+                bg-neutral-800 hover:bg-neutral-700
+                border border-neutral-700
                 flex items-center justify-center
-                transition-all duration-200
+                transition-all duration-150
                 hover:scale-105 active:scale-95
               "
             >
-              <RotateCcw className="w-5 h-5 text-[#a3a3a3]" />
+              <RotateCcw className="w-4 h-4 text-neutral-400" strokeWidth={2} />
             </button>
 
-            <div className="h-8 w-px bg-[#ffffff]/10 mx-2" />
+            <div className="h-6 w-px bg-neutral-700 mx-1.5" />
 
             {/* Speed controls */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-[#a3a3a3] uppercase tracking-wide">Speed</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-neutral-500 uppercase tracking-wide mr-1">Speed</span>
               {[0.5, 1, 2].map((s) => (
                 <button
                   key={s}
                   onClick={() => onSpeedChange(s)}
                   className={`
-                    px-3 py-1.5 rounded-lg text-xs font-mono
-                    transition-all duration-200
-                    ${
-                      speed === s
-                        ? 'bg-[#00d4ff]/20 text-[#00d4ff] border border-[#00d4ff]/30'
-                        : 'bg-[#1f1f1f] text-[#a3a3a3] border border-[#ffffff]/10 hover:border-[#ffffff]/20'
+                    px-2.5 py-1 rounded text-xs font-mono
+                    transition-all duration-150
+                    ${speed === s
+                      ? 'bg-sky-500/20 text-sky-400 border border-sky-500/40'
+                      : 'bg-neutral-800 text-neutral-500 border border-neutral-700 hover:border-neutral-600 hover:text-neutral-400'
                     }
                   `}
                 >
@@ -151,15 +146,15 @@ export const TimelineControls = ({
           <button
             onClick={onExport}
             className="
-              px-5 py-2.5 rounded-lg
-              bg-[#ffffff] hover:bg-[#e6e6e6]
+              px-4 py-2 rounded-lg
+              bg-white hover:bg-neutral-100
               flex items-center gap-2
-              transition-all duration-200
-              hover:scale-105 active:scale-95
+              transition-all duration-150
+              hover:scale-[1.02] active:scale-[0.98]
             "
           >
-            <Download className="w-4 h-4 text-[#0a0a0a]" />
-            <span className="text-sm font-semibold text-[#0a0a0a]">Generate Report</span>
+            <Download className="w-4 h-4 text-neutral-900" strokeWidth={2} />
+            <span className="text-sm font-medium text-neutral-900">Export Report</span>
           </button>
         </div>
       </motion.div>
