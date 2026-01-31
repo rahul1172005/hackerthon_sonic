@@ -29,9 +29,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black text-white selection:bg-cyan-900/50 flex flex-col items-center justify-center relative overflow-hidden font-sans">
 
       {/* Ambient Background */}
-      <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 pointer-events-none"></div>
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-cyan-900/20 blur-[120px] rounded-full pointer-events-none"></div>
-      <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-blue-900/10 blur-[100px] rounded-full pointer-events-none"></div>
+
 
       <main className="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-12">
 

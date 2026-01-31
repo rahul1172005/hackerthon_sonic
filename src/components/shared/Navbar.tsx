@@ -3,6 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NavbarProps {
     className?: string;
@@ -24,9 +25,22 @@ export function Navbar({ className }: NavbarProps) {
             )}
         >
             {/* Logo / Brand - Left */}
-            <Link href="/" className="flex items-center gap-2 cursor-pointer group">
-                <div className="w-2 h-6 bg-white rounded-full animate-pulse-slow group-hover:bg-zinc-200 transition-colors" />
-                <span className="text-lg font-semibold tracking-widest text-white font-sans group-hover:text-zinc-200 transition-colors">IRIS</span>
+            <Link href="/" className="flex items-center gap-4 cursor-pointer group select-none">
+                <div className="relative w-12 h-12 flex items-center justify-center">
+                    <Image
+                        src="/logo1111.png"
+                        alt="IRIS Logo"
+                        width={44} // Slightly larger for visibility
+                        height={44}
+                        className="object-contain brightness-0 invert"
+                        priority
+                    />
+                </div>
+                <div className="flex flex-col">
+                    <span className="text-2xl font-black tracking-[0.2em] text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-white/70 drop-shadow-sm">
+                        IRIS
+                    </span>
+                </div>
             </Link>
 
             {/* Center Navigation Removed */}

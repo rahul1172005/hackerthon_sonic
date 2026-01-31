@@ -22,7 +22,7 @@ export function Sidebar({ className }: { className?: string }) {
     const safeSessions = sessions || [];
 
     return (
-        <div className={cn("w-[260px] h-full bg-sidebar border-r border-sidebar-border flex flex-col", className)}>
+        <div className={cn("w-[260px] shrink-0 h-full bg-sidebar border-r border-sidebar-border flex flex-col", className)}>
             <div className="p-4">
                 <Button
                     variant="outline"
@@ -101,11 +101,9 @@ export function Sidebar({ className }: { className?: string }) {
                     <div className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center text-white font-bold text-xs border border-zinc-700 ring-2 ring-transparent group-hover:ring-zinc-600 transition-all">
                         ENG
                     </div>
-                    <div className="flex-1 overflow-hidden">
-                        <p className="text-sm font-medium text-sidebar-foreground truncate group-hover:text-white transition-colors">Raja Admin</p>
-
-                        <p className="text-xs text-muted-foreground truncate">Principal Architect</p>
-                    </div>
+                </div>
+                <div className="flex-1 overflow-hidden">
+                    {/* User info removed */}
                 </div>
             </div>
         </div>
