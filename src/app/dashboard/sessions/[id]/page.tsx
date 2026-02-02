@@ -114,7 +114,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                 <h1 className="text-2xl font-bold mb-4">Session Not Found</h1>
                 <p className="text-zinc-400 mb-6">The requested session "{id}" does not exist.</p>
                 <Link href="/dashboard">
-                    <Button variant="outline" className="text-black bg-white hover:bg-zinc-200">
+                    <Button variant="physical" className="w-[180px]">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Back to Dashboard
                     </Button>
@@ -148,7 +148,7 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {data.date}</span>
                             </div>
                         </div>
-                        <Button className="bg-white text-black hover:bg-zinc-200">
+                        <Button variant="physical" className="w-[180px]">
                             <FileText className="w-4 h-4 mr-2" />
                             Generate Report
                         </Button>
@@ -215,8 +215,8 @@ export default function SessionDetailPage({ params }: { params: { id: string } }
                                 <div className="flex justify-between border-b border-zinc-800 pb-2">
                                     <span className="text-zinc-500 text-sm">Risk Level</span>
                                     <span className={`text-sm font-medium px-2 py-0.5 rounded-full ${data.details.riskLevel === 'Low' ? 'bg-green-500/10 text-green-400' :
-                                            data.details.riskLevel === 'Medium' ? 'bg-yellow-500/10 text-yellow-400' :
-                                                'bg-red-500/10 text-red-400'
+                                        data.details.riskLevel === 'Medium' ? 'bg-yellow-500/10 text-yellow-400' :
+                                            'bg-red-500/10 text-red-400'
                                         }`}>
                                         {data.details.riskLevel}
                                     </span>

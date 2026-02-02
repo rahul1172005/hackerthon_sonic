@@ -892,7 +892,7 @@ export function TestingDashboard() {
                                 {/* Footer Actions */}
                                 <div className="flex items-center justify-between pt-6 border-t border-zinc-800/50">
                                     <Button
-                                        variant="ghost"
+                                        variant="physical"
                                         onClick={() => setManualEntry({
                                             location: '',
                                             tof: 0,
@@ -909,19 +909,17 @@ export function TestingDashboard() {
                                             temperature: 20,
                                             notes: ''
                                         })}
-                                        className="text-zinc-400 hover:text-white hover:bg-zinc-800"
+                                        className="w-[140px]"
                                     >
 
                                         Reset Form
                                     </Button>
                                     <Button
+                                        variant="physical"
                                         onClick={handleManualAdd}
                                         disabled={!manualEntry.location}
                                         size="lg"
-                                        className={cn(
-                                            "bg-white text-black hover:bg-zinc-200 shadow-lg shadow-zinc-900/50 transition-all duration-200 px-8 h-12 text-base font-semibold",
-                                            !manualEntry.location && "opacity-50 cursor-not-allowed"
-                                        )}
+                                        className="w-[180px]"
                                     >
 
                                         Submit Test Record
@@ -995,8 +993,9 @@ export function TestingDashboard() {
                                                     <div className="text-white text-2xl font-bold mt-1">{analysis.defectsFound}</div>
                                                 </div>
                                                 <Button
+                                                    variant="physical"
                                                     onClick={exportData}
-                                                    className="bg-white text-black hover:bg-zinc-200 shadow-lg"
+                                                    className="w-[140px]"
                                                 >
 
                                                     Export Data
@@ -1107,13 +1106,14 @@ export function TestingDashboard() {
                                     </p>
                                     {!isDragging && (
                                         <Button
+                                            variant="physical"
                                             size="lg"
                                             type="button"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 fileInputRef.current?.click();
                                             }}
-                                            className="bg-white text-black hover:bg-zinc-200 shadow-lg transition-all duration-200 px-8"
+                                            className="w-[160px]"
                                         >
 
                                             Select CSV File
@@ -1223,19 +1223,20 @@ export function TestingDashboard() {
                                     <div className="flex gap-3">
                                         {!isRecording ? (
                                             <Button
+                                                variant="physical"
                                                 onClick={startRecording}
                                                 size="lg"
-                                                className="bg-white text-black hover:bg-zinc-200 shadow-lg transition-all duration-200 px-8"
+                                                className="w-[180px]"
                                             >
 
                                                 {isConnected ? "Start Recording" : "Connect & Record"}
                                             </Button>
                                         ) : (
                                             <Button
+                                                variant="physical"
                                                 onClick={stopRecording}
                                                 size="lg"
-                                                variant="outline"
-                                                className="border-zinc-800 bg-red-950/20 text-zinc-300 hover:bg-red-950/40 hover:text-red-300 hover:border-red-700 px-8"
+                                                className="w-[160px]"
                                             >
 
                                                 Stop Recording
@@ -1243,9 +1244,9 @@ export function TestingDashboard() {
                                         )}
                                         {isConnected && !isRecording && (
                                             <Button
+                                                variant="physical"
                                                 onClick={disconnectArduino}
-                                                variant="outline"
-                                                className="border-zinc-800 bg-amber-950/20 text-zinc-300 hover:bg-amber-950/40 hover:text-amber-300 hover:border-amber-700"
+                                                className="w-[140px]"
                                             >
 
                                                 Disconnect
@@ -1253,9 +1254,9 @@ export function TestingDashboard() {
                                         )}
                                         {liveData.length > 0 && (
                                             <Button
+                                                variant="physical"
                                                 onClick={clearLiveData}
-                                                variant="outline"
-                                                className="border-zinc-700 bg-zinc-800/50 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                                                className="w-[120px]"
                                             >
 
                                                 Clear Data

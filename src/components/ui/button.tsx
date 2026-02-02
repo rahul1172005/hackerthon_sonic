@@ -20,7 +20,7 @@ const buttonVariants = cva(
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         physical:
-          "relative h-12 rounded-xl bg-gradient-to-b from-[#2d2d2d] to-[#1f1f1f] text-zinc-300 font-medium border-t border-white/10 border-b border-black/50 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.4),inset_0_1px_0_white/5,inset_0_-1px_0_white/5] transition-all duration-200 ease-out hover:brightness-110 active:scale-[0.98] active:shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] after:content-[''] after:absolute after:-bottom-[10px] after:left-1/2 after:-translate-x-1/2 after:w-6 after:h-[3px] after:rounded-full after:bg-zinc-800 after:shadow-[0_1px_0_white/10] after:transition-all after:duration-300 active:after:bg-[#4da3ff] active:after:shadow-[0_0_8px_2px_rgba(77,163,255,0.4)] active:after:w-8 mb-4",
+          "relative h-[56px] px-12 rounded-full bg-[#0d0d0d] border-none cursor-pointer overflow-hidden shadow-[0_0_0_1.5px_rgba(255,255,255,0.1),0_28px_56px_rgba(0,0,0,0.75),inset_0_0.5px_1px_rgba(255,255,255,0.06)] transition-all duration-[400ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[6px] hover:shadow-[0_0_0_2px_rgba(255,255,255,0.15),0_36px_72px_rgba(0,0,0,0.85),inset_0_1px_2px_rgba(255,255,255,0.1)] active:translate-y-[1px] active:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_16px_32px_rgba(0,0,0,0.7)] before:content-[''] before:absolute before:inset-[0.5px] before:rounded-full before:bg-gradient-to-b before:from-white/[0.18] before:via-white/[0.04] before:via-35% before:to-transparent before:to-70% before:z-[1] before:pointer-events-none after:content-[''] after:absolute after:inset-0 after:rounded-full after:bg-[linear-gradient(140deg,rgba(255,255,255,0.45)_0%,rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.45)_100%)] after:p-[0.5px] after:[mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] after:[mask-composite:exclude] after:[-webkit-mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)] after:[-webkit-mask-composite:xor] after:pointer-events-none after:z-[4] after:opacity-80",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -45,6 +45,7 @@ function Button({
   variant = "default",
   size = "default",
   asChild = false,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -59,7 +60,23 @@ function Button({
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    />
+    >
+      {variant === "physical" && !asChild ? (
+        <>
+          <span className="relative z-[5] text-white font-medium text-[15px] tracking-[0.4px] drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] [text-shadow:0_0_20px_rgba(255,255,255,0.15)]">{children}</span>
+          <span className="absolute inset-0 rounded-full z-[2] opacity-95 mix-blend-screen">
+            <span className="absolute inset-0 bg-[radial-gradient(ellipse_150px_75px_at_65%_48%,rgba(255,255,255,0.42),rgba(255,255,255,0.08)_50%,transparent_68%)] blur-[10px]" />
+            <span className="absolute top-[28%] right-[22%] w-[4px] h-[4px] bg-white/70 rounded-full blur-[0.5px] shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+            <span className="absolute top-[42%] right-[28%] w-[5px] h-[5px] bg-white/50 rounded-full blur-[1.5px] shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
+            <span className="absolute top-[58%] right-[32%] w-[3px] h-[3px] bg-white/60 rounded-full blur-[1px] shadow-[0_0_5px_rgba(255,255,255,0.5)]" />
+            <span className="absolute top-[35%] right-[38%] w-[2px] h-[2px] bg-white/40 rounded-full blur-[1px] shadow-[0_0_4px_rgba(255,255,255,0.3)]" />
+            <span className="absolute top-[50%] right-[42%] w-[2px] h-[2px] bg-white/35 rounded-full blur-[1.5px]" />
+          </span>
+        </>
+      ) : (
+        children
+      )}
+    </Comp>
   )
 }
 

@@ -37,7 +37,7 @@ export default function LandingPage() {
           alt="Background"
           fill
           priority
-          className="object-cover opacity-20 grayscale"
+          className="object-cover opacity-10 grayscale"
           unoptimized
         />
       </div>      <main className="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-12">
@@ -82,7 +82,7 @@ export default function LandingPage() {
               variant="physical"
               size="lg"
               onClick={handleTryNow}
-              className="px-12 py-8 text-lg font-bold tracking-widest rounded-xl hover:scale-105 active:scale-95 transition-all duration-300"
+              className="w-[140px]"
             >
               <span className="relative z-10 flex items-center gap-3">
                 TRY NOW

@@ -25,8 +25,8 @@ export function Sidebar({ className }: { className?: string }) {
         <div className={cn("w-[260px] shrink-0 h-full bg-sidebar border-r border-sidebar-border flex flex-col", className)}>
             <div className="p-4">
                 <Button
-                    variant="outline"
-                    className="w-full justify-start gap-2 border-sidebar-border bg-sidebar-accent text-sidebar-foreground hover:bg-sidebar-accent/80 transition-all h-10 shadow-sm"
+                    variant="physical"
+                    className="w-full justify-start gap-3 pl-6"
                     onClick={() => clearMessages()}
                 >
                     <Plus className="w-4 h-4" />

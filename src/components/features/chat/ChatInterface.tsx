@@ -9,9 +9,11 @@ import { Send, Upload } from 'lucide-react';
 import { MessageList } from './MessageList';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function ChatInterface() {
     const { addMessage, messages, isLoading, setLoading, streamMessage } = useChatStore();
+    const pathname = usePathname();
     const [input, setInput] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -130,12 +132,11 @@ export function ChatInterface() {
                                         key={link.name}
                                         asChild
                                         variant="physical"
-                                        className="rounded-full px-8 h-12 mb-0 after:hidden hover:scale-105 active:scale-95 text-white bg-black border-white/20"
+                                        className="w-[140px]"
+                                        data-state={pathname === link.href ? 'active' : 'inactive'}
                                     >
                                         <Link href={link.href}>
-                                            <span className="relative z-10 tracking-widest font-bold text-xs">
-                                                {link.name}
-                                            </span>
+                                            {link.name}
                                         </Link>
                                     </Button>
                                 ))}
